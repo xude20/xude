@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    
+    <script src="js/jquery-1.12.4.min.js"></script>
+    
+    <script>
+        $(function () {
+           
+            //发送ajax请求，加载所有省份数据
+            $.get("provinceController",{},function (data) {
+                //[{"id":1,"name":"北京"},{"id":2,"name":"上海"},{"id":3,"name":"广州"},{"id":4,"name":"陕西"}]
+
+                //1.获取select
+                var province = $("#province");
+                //2.遍历json数组
+                $(data).each(function () {
+                    //3.创建<option>
+                    var option = "<option value='"+this.id+"'>"+this.name+"</option>";
+
+                    //4.调用select的append追加option
+                    province.append(option);
+                });
+
+            });
+
+            $("#province").change(function () {
+                var pro_id = $("#province").val();
+                // alert(pro_id);
+                city(pro_id);
+                // county(pro_id);
+            });
+
+            $("#city").change(function () {
+                var city_id = $("#city").val();
+                county(city_id);
+            });
+
+        });
+
+        function city(pro_id) {
+            // alert(pro_id);
+            var city = $("#city");
+            $.get("cityController",{pro_id:pro_id},function (data) {
+                city.html("<option>--请选择市--</option>");
+                $("#county").html("<option>--请选择县--</option>");
+                $(data).each(function () {
+                    var option = "<option value='"+this.id+"'>"+this.name+"</option>";
+                    city.append(option);
+                });
+            });
+        }
+
+        function county(city_id) {
+            // alert("county的city_id:"+city_id);
+            $.get("countyController",{city_id:city_id},function (data) {
+                $("#county").html("<option>--请选择县--</option>");
+                $(data).each(function () {
+                    var option = "<option value='"+this.id+"'>"+this.name+"</option>";
+                    $("#county").append(option);
+                });
+            });
+        }
+
+    </script>
+    
+</head>
+<body>
+
+
+
+        <select id="province">
+            <option>--请选择省份--</option>
+        </select>
+
+        <select id="city">
+            <option>--请选择市--</option>
+        </select>
+        <select id="county">
+            <option>--请选择县--</option>
+        </select>
+</body>
+</html>
